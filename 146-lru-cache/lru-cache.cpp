@@ -1,42 +1,42 @@
 class LRUCache {
-private:
-int cap;
-  list<pair<int ,int>> cache;
-  unordered_map<int,list<pair<int ,int>> ::iterator> map;
 public:
-// Code with Radheshyam (.^.)
+    int c;
+    list<int>s;
+    int l;
+    unordered_map<int,pair< list<int>::iterator ,int>>mp;
     LRUCache(int capacity) {
-        cap=capacity;
+       c=capacity;  
+       l=0;  
     }
     
     int get(int key) {
-        if(map.find(key)==map.end()) return -1;
-        auto it=map[key];
-        int value=it->second;
-        cache.erase(it);
-        cache.push_front({key,value});
-        map[key]=cache.begin();
-        return value;
+        if(mp.find(key)==mp.end())return -1;
+        s.push_front(key);
+        s.erase(mp[key].first);
+        mp[key].first = s.begin();
+        return mp[key].second;
     }
     
     void put(int key, int value) {
-        if(map.find(key) != map.end()){
-            auto it=map[key];
-            cache.erase(it);
+        if(mp.find(key)!=mp.end()){
+            s.push_front(key);
+            s.erase(mp[key].first);
+            mp[key].first = s.begin();
+            mp[key].second = value;
+            return;
         }
-        else if(cache.size()== cap){
-            auto lru = cache.back();
-            map.erase(lru.first);
-            cache.pop_back();
+        if(l==c){
+            s.push_front(key);
+            mp[key].first =s.begin();
+             mp[key].second =value;
+             mp.erase(s.back());
+             s.pop_back();
+             return;
+        }else if(l<c){
+             s.push_front(key);
+            mp[key].first =s.begin();
+             mp[key].second =value;
+             l++;
         }
-        cache.push_front({key, value});
-        map[key]=cache.begin();
     }
 };
-
-/**
- * Your LRUCache object will be instantiated and called as such:
- * LRUCache* obj = new LRUCache(capacity);
- * int param_1 = obj->get(key);
- * obj->put(key,value);
- */
