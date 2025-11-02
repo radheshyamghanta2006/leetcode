@@ -18,25 +18,19 @@ public:
     }
     
     void put(int key, int value) {
-        if(mp.find(key)!=mp.end()){
-            s.push_front(key);
+        if (mp.find(key) != mp.end()) {
+            // Key exists: erase old position and update
             s.erase(mp[key].first);
-            mp[key].first = s.begin();
-            mp[key].second = value;
-            return;
+        } 
+        else if (s.size() == c) {
+            // Cache is full: remove least recently used (back)
+            int oldKey = s.back();
+            s.pop_back();
+            mp.erase(oldKey);
         }
-        if(l==c){
-            s.push_front(key);
-            mp[key].first =s.begin();
-             mp[key].second =value;
-             mp.erase(s.back());
-             s.pop_back();
-             return;
-        }else if(l<c){
-             s.push_front(key);
-            mp[key].first =s.begin();
-             mp[key].second =value;
-             l++;
-        }
+
+        // Insert the new key at front
+        s.push_front(key);
+        mp[key] = {s.begin(), value};
     }
 };
